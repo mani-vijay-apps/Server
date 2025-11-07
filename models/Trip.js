@@ -38,6 +38,18 @@ const tripSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  dieselAmount: {
+    type: Number,
+    required: true
+  },
+  oilAmount: {
+    type: Number,
+    required: true
+  },
+  fastTagAmount: {
+    type: Number,
+    required: true
+  },
   totalExpense: {
     type: Number,
     required: true

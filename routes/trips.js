@@ -15,7 +15,10 @@ router.post('/', async (req, res) => {
       loadingAmount,
       unloadingAmount,
       driverBeta,
-      advanceAmount
+      advanceAmount,
+      dieselAmount,
+      oilAmount,
+      fastTagAmount
     } = req.body;
 
     // Validate truck existence
@@ -25,7 +28,15 @@ router.post('/', async (req, res) => {
     }
 
     // Calculate totals
-    const totalExpense = freightAmount + loadingAmount + unloadingAmount + driverBeta;
+    const totalExpense =
+      freightAmount +
+      loadingAmount +
+      unloadingAmount +
+      driverBeta +
+      dieselAmount +
+      oilAmount +
+      fastTagAmount;
+
     const balanceAmount = totalExpense - advanceAmount;
 
     const trip = new Trip({
@@ -38,6 +49,9 @@ router.post('/', async (req, res) => {
       unloadingAmount,
       driverBeta,
       advanceAmount,
+      dieselAmount,
+      oilAmount,
+      fastTagAmount,
       totalExpense,
       balanceAmount
     });
@@ -70,6 +84,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Update a trip
 router.put('/:id', async (req, res) => {
   try {
     const updated = await Trip.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -79,6 +94,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Delete a trip
 router.delete('/:id', async (req, res) => {
   try {
     await Trip.findByIdAndDelete(req.params.id);
@@ -87,4 +103,5 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
 module.exports = router;
