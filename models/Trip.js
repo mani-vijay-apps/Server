@@ -50,10 +50,6 @@ const tripSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  totalExpense: {
-    type: Number,
-    required: true
-  },
   balanceAmount: {
     type: Number,
     required: true
