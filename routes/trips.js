@@ -18,7 +18,8 @@ router.post('/', async (req, res) => {
       advanceAmount,
       dieselAmount,
       oilAmount,
-      fastTagAmount
+      fastTagAmount,
+      taxAmount
     } = req.body;
 
     // Validate truck existence
@@ -27,16 +28,18 @@ router.post('/', async (req, res) => {
       return res.status(404).json({ message: 'Truck not found' });
     }
 
+    // Calculate total expense (excluding advanceAmount)
+    const totalExpense =
+      loadingAmount +
+      unloadingAmount +
+      driverBeta +
+      dieselAmount +
+      oilAmount +
+      fastTagAmount +
+      taxAmount;
+
     // Calculate balance amount
-    const balanceAmount =
-      freightAmount -
-      (loadingAmount +
-        unloadingAmount +
-        driverBeta +
-        dieselAmount +
-        oilAmount +
-        fastTagAmount +
-        advanceAmount);
+    const balanceAmount = totalExpense - advanceAmount;
 
     const trip = new Trip({
       truck: truckId,
@@ -51,6 +54,8 @@ router.post('/', async (req, res) => {
       dieselAmount,
       oilAmount,
       fastTagAmount,
+      taxAmount,
+      totalExpense,
       balanceAmount
     });
 
@@ -60,6 +65,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
+
 // Get all trips
 router.get('/', async (req, res) => {
   try {
@@ -84,6 +90,46 @@ router.get('/:id', async (req, res) => {
 // Update a trip
 router.put('/:id', async (req, res) => {
   try {
+    const {
+      loadingAmount,
+      unloadingAmount,
+      driverBeta,
+      dieselAmount,
+      oilAmount,
+      fastTagAmount,
+      taxAmount,
+      advanceAmount
+    } = req.body;
+
+    // Recalculate totalExpense and balanceAmount if relevant fields are present
+    let totalExpense = null;
+    let balanceAmount = null;
+
+    if (
+      loadingAmount !== undefined &&
+      unloadingAmount !== undefined &&
+      driverBeta !== undefined &&
+      dieselAmount !== undefined &&
+      oilAmount !== undefined &&
+      fastTagAmount !== undefined &&
+      taxAmount !== undefined &&
+      advanceAmount !== undefined
+    ) {
+      totalExpense =
+        loadingAmount +
+        unloadingAmount +
+        driverBeta +
+        dieselAmount +
+        oilAmount +
+        fastTagAmount +
+        taxAmount;
+
+      balanceAmount = totalExpense - advanceAmount;
+
+      req.body.totalExpense = totalExpense;
+      req.body.balanceAmount = balanceAmount;
+    }
+
     const updated = await Trip.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updated);
   } catch (err) {
