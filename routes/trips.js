@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
     // Calculate balance amount
     const balanceAmount = totalExpense - Number(advanceAmount);
     const profitAmount = Number(freightAmount) - totalExpense - Number(dieselAmount);
-    console.log("Balance: "+balanceAmount+" Profit: "+profitAmount+ "Advance: "+advanceAmount+"Total expense: "+totalExpense);
+    
     const trip = new Trip({
       truck: truckId,
       date,
@@ -125,10 +125,10 @@ router.put('/:id', async (req, res) => {
       (Number(taxAmount) || 0);
 
     // Calculate balance amount
-    const balanceAmount = totalExpense - (advanceAmount || 0);
+    const balanceAmount = totalExpense - (Number(advanceAmount) || 0);
 
     // Calculate profit amount
-    const profitAmount = (freightAmount || 0) - totalExpense - (dieselAmount || 0);
+    const profitAmount = (Number(freightAmount) || 0) - totalExpense - (Number(dieselAmount) || 0);
 
     // Build update object
     const updateData = {
