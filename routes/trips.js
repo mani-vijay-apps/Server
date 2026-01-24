@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
     // Calculate balance amount
     const balanceAmount = totalExpense - advanceAmount;
     const profitAmount = freightAmount - totalExpense - dieselAmount;
-
+    console.log("Balance: "+balanceAmount+" Profit: "+profitAmount+ "Advance: "+advanceAmount+"Total expense: "+totalExpense);
     const trip = new Trip({
       truck: truckId,
       date,
