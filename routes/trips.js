@@ -33,13 +33,13 @@ router.post('/', async (req, res) => {
       loadingAmount +
       unloadingAmount +
       driverBeta +
-      dieselAmount +
       oilAmount +
       fastTagAmount +
       taxAmount;
 
     // Calculate balance amount
     const balanceAmount = totalExpense - advanceAmount;
+    const profitAmount = freightAmount - totalExpense - dieselAmount;
 
     const trip = new Trip({
       truck: truckId,
@@ -56,7 +56,8 @@ router.post('/', async (req, res) => {
       fastTagAmount,
       taxAmount,
       totalExpense,
-      balanceAmount
+      balanceAmount,
+      profitAmount
     });
 
     await trip.save();
@@ -65,7 +66,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-
+ 
 // Get all trips
 router.get('/', async (req, res) => {
   try {
@@ -104,7 +105,7 @@ router.put('/:id', async (req, res) => {
     // Recalculate totalExpense and balanceAmount if relevant fields are present
     let totalExpense = null;
     let balanceAmount = null;
-
+    let profitAmount = null;
     if (
       loadingAmount !== undefined &&
       unloadingAmount !== undefined &&
@@ -119,15 +120,16 @@ router.put('/:id', async (req, res) => {
         loadingAmount +
         unloadingAmount +
         driverBeta +
-        dieselAmount +
         oilAmount +
         fastTagAmount +
         taxAmount;
 
       balanceAmount = totalExpense - advanceAmount;
+      profitAmount = freightAmount - totalExpense - dieselAmount;
 
       req.body.totalExpense = totalExpense;
       req.body.balanceAmount = balanceAmount;
+      req.body.profitAmount = profitAmount;
     }
 
     const updated = await Trip.findByIdAndUpdate(req.params.id, req.body, { new: true });

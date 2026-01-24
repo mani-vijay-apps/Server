@@ -61,6 +61,10 @@ const tripSchema = new mongoose.Schema({
   totalExpense: {
     type: Number,
     required: true
+  },
+  profitAmount: {
+    type: Number,
+    required: true
   }
 }, { timestamps: true });
 
